@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<ChartXML>
+    <chart>
+        <chTitle>SAIR Highcharts</chTitle>
+        <chSubtitle>2015</chSubtitle>
+        <yAxisTitle>Stats</yAxisTitle>
+        <xAxisCategory>Races</xAxisCategory>
+        <legendAlign>right</legendAlign>
+        <legendLayout>vertical</legendLayout>
+        <vertAlign>middle</vertAlign>
+        <csv>Highcharts test data.csv</csv>
+    </chart>
+    
+    <columns>
+        <vName>Black</vName>
+        <uCName>Rac</uCName>
+        <value>B</value>
+    </columns>
+        
+    <columns>
+        <vName>White</vName>
+        <uCName>Rac</uCName>
+        <value>W</value>
+    </columns>
+    
+    <columns>
+        <vName>Hispanic</vName>
+        <uCName>Rac</uCName>
+        <value>H</value>
+    </columns>
+    
+    <columns>
+        <vName>Traditional</vName>
+        <uCName>Prog</uCName>
+        <value>TRAD</value>
+    </columns>
+    
+    <columns>
+        <vName>Male</vName>
+        <uCName>Sx</uCName>
+        <value>M</value>
+    </columns>
+    
+    <columns>
+        <vName>Female</vName>
+        <uCName>Sx</uCName>
+        <value>W</value>
+    </columns>
+</ChartXML>

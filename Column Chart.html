@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html>
+    
+  <!-- Author: Alex Roate -->  
+  
+    <head>
+        <link rel="shortcut icon" href="">
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+        <title>Highcharts Presentation</title>
+        <!-- 1. Add JQuery and Highcharts in the head of your page -->
+        <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.1/jquery.min.js"></script>
+        <script src="http://code.highcharts.com/highcharts.js"></script>
+        <!-- 2. You can add print and export feature by adding this line -->
+        <script src="http://code.highcharts.com/modules/exporting.js"></script>                  
+        <!-- 3. Add the JavaScript with the Highchart options to initialize the chart -->
+        <script type="text/javascript">        
+            
+        jQuery(document).ready(function() {
+            
+            var cNumArray = [];
+            var cNameArray = [];
+            var uCNameArray = [];
+            var valueArray = [];
+            var vNameArray = [];
+            var countArray = [];
+            var columnCount = 0;
+            var i = 0;
+        
+                $.ajax({
+                
+                    // Instructions to connect to requested XML file requested by user
+                    type: "GET",
+                    url: "ChartXML.xml",
+                    dataType: "xml",
+                    success: function(xml){
+                    
+                        // Search through every iteration of the 'chart' tag and pull data via instructions
+                        $(xml).find('chart').each(function(){
+                            chTitle = $(this).find('chTitle').text();
+                            chSubtitle = $(this).find('chSubtitle').text();
+                            yAxisTitle = $(this).find('yAxisTitle').text();
+                            xAxisLabel = $(this).find('xAxisLabel').text();
+                            xAxisCategory = $(this).find('xAxisCategory').text();
+                            legendAlign = $(this).find('legendAlign').text();
+                            legendLayout = $(this).find('legendLayout').text();
+                            floLegend = $(this).find('floLegend').text();
+                            vertAlign = $(this).find('vertAlign').text();
+                            csv = $(this).find('csv').text();
+                        }); // End XML chart
+                        
+                        // Search through every iteration of the 'columns' tag and pull data via instructions
+                        // With each 'columns' tag, i is increased and is used to initialize the correct amount of countArray elements
+                        $(xml).find('columns').each(function(){
+                            countArray[i] = 0;
+                            uCName = $(this).find('uCName').text();
+                            uCNameArray.push(uCName);
+                            value = $(this).find('value').text();
+                            valueArray.push(value);
+                            vName = $(this).find('vName').text();
+                            vNameArray.push(vName);
+                            i++;
+                        }); // End XML columns
+                        
+                    // JQuery function to process the csv data
+                    $.get(csv, function(data){
+                        
+                        // Splits the rows of data
+                        var lines = data.split('\n');                        
+                            // Iterates through each split row
+                            $.each(lines, function(lineNo, line){ 
+                                
+                                // Splits up all the items found in a row
+                                var items = line.split(',');                            
+                                    // Iterates through each split row item
+                                    $.each(items, function(itemNo, item){
+                                    
+                                        // Intended purpose is to put all column names into an array
+                                        // Counts the number of columns in the csv 
+                                        if(lineNo === 0){
+                                            
+                                            cNameArray.push(item);
+                                            columnCount++;
+                                        } // end if                                    
+                                    }); // End items each
+                                    
+                                    var j = 0;
+                                    var k = 0;   
+                                    
+                                    // Loops equal to the length of uCNameArray
+                                    // Resets k to 0 in order start the inner while loop from the begiining with the next element of uCNameArray
+                                    while(j !== uCNameArray.length){
+                                        
+                                        // Loops equal the value of columnCount
+                                        while(k !== columnCount ){
+                                            
+                                            // Checks if name at current k value index of cNameArray is equal to name of current j value index of uCNameArray
+                                            // If it is found to be equal, the current value of k is pushed to cNumArray
+                                            // cNumArray stores the column number of the name of the column provided by the user in the XML file
+                                            if(uCNameArray[j] === cNameArray[k]){
+                                                
+                                                cNumArray.push(k);
+                                            } // End if
+                            
+                                            k++;
+                                        } // End while
+                                        
+                                        k = 0;
+                                        j++;
+                                    } // End while
+                            
+                                    $.each(items, function(itemNo, item) {
+                                        
+                                        var i = 0;
+                                        
+                                        // Loops equal to the length of cNumArray
+                                        while(i !== cNumArray.length){
+                                            
+                                            // Checks if the column number determined by the name given by user matches the column being searched
+                                            if (itemNo === cNumArray[i]){
+                                                
+                                                // Checks if value of cell in the above column contains the value provided by user
+                                                // If the values are found equal, the i index of countArray is iterated by 1
+                                                // countArray stores the the count of each value the software is instructed to search for by the user
+                                                if(item === valueArray[i]){
+                                                    
+                                                    countArray[i] = countArray[i] + 1;
+                                                } // End if
+                                            } // End if
+                                            
+                                            i++;
+                                        } // End while
+                                    }); // End items each
+                                    
+                            }); // End lines each
+                
+                            // Creates and array in which to store the names and data to be used bt Highcharts
+                            var series = [];
+                            
+                            // Loops equal to the length of countArray
+                            // Pushes the p index value of vNameArray and countArray to the series array
+                            for(p = 0; p < countArray.length; p++){
+                                series.push({
+                                    name:[vNameArray[p]],
+                                    data:[countArray[p]]
+                                });
+                            } // End for
+                
+                            // Highcharts 
+                            // Customization can be found at http://api.highcharts.com/highcharts
+                            var options = {
+                            
+                                chart: {
+                                    renderTo: 'container',
+                                    type: 'column'
+                                },
+                                title: {
+                                    text: chTitle                
+                                },
+                                subtitle: {
+                                    text: chSubtitle
+                                },
+                                xAxis: {
+                                categories: [xAxisCategory]
+                                },
+                                plotOptions: {
+                                    column: {
+                                        dataLabels: {
+                                            enabled: true
+                                        }
+                                    }
+                                },
+                                legend: {
+                                    layout: legendLayout,
+                                    align: legendAlign,
+                                    floating: false,
+                                    verticalAlign:vertAlign,
+                                    borderWidth: 1,
+                                    backgroundColor: ((Highcharts.theme && Highcharts.theme.legendBackgroundColor) || '#FFFFFF'),
+                                    shadow: true
+                                },
+                                yAxis: {
+                                    title: {
+                                        text: yAxisTitle
+                                    }
+                                },
+                                series: series
+                            };
+                
+                            // Putting all together and create the chart
+                            var chart = new Highcharts.Chart(options);
+                            
+                    }); // End $.get()
+                
+                }, // End XML success
+                
+                // Displays id connection to XML file fails
+                error: function(){
+                    
+                    $.text('Failed to get feed');
+                    
+                } // End XML error
+                
+            }); // End ajax 
+            
+        }); // End jQuery
+        
+        </script>
+         
+    </head>
+    
+    <body>
+         
+        <!-- 3. Add the container -->
+        <div id="container" style="width: 600px; height: 400px; margin: 0 auto"></div>
+        <div class="XTEST">
+            <ul></ul>
+        </div>
+        
+                 
+    </body>
+    
+</html>

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<ChartXML>
+    <chart>
+        <chTitle>SAIR Highcharts</chTitle>
+        <chSubtitle>2015</chSubtitle>
+        <yAxisTitle>Stats</yAxisTitle>
+        <xAxisCategory>Gender</xAxisCategory>
+        <legendAlign>right</legendAlign>
+        <legendLayout>vertical</legendLayout>
+        <vertAlign>middle</vertAlign>
+        <csv>Highcharts test data.csv</csv>
+    </chart>
+    
+    
+    <columns>
+        <vName>Male</vName>
+        <uCName>Sx</uCName>
+        <value>M</value>
+    </columns>
+    
+    <columns>
+        <vName>Female</vName>
+        <uCName>Sx</uCName>
+        <value>W</value>
+    </columns>
+</ChartXML>
